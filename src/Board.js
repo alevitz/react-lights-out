@@ -27,11 +27,12 @@ import "./Board.css";
  *
  **/
 
-function Board({nrows=10, ncols=10, chanceLightStartsOn}) {
+function Board({ nrows = 2, ncols = 2, chanceLightStartsOn }) {
   const [board, setBoard] = useState(createBoard());
-      
+
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
   function createBoard() {
+    
     let initialBoard = [];
     // TODO: create array-of-arrays of true/false values
     for (let i = 0; i < nrows; i++) {
@@ -47,19 +48,24 @@ function Board({nrows=10, ncols=10, chanceLightStartsOn}) {
   }
 
   function hasWon() {
+    
     // TODO: check the board in state to determine whether the player has won.
     for (let i = 0; i < nrows; i++) {
       for (let j = 0; j < ncols; j++) {
-        if (nrows[i][j] === true) {
+        console.log(board);
+        if (board[i][j] === true) {
+          
           return false;
         }
       }
     }
+    console.log("you won!")
     return true;
   }
 
 
   function flipCellsAround(coord) {
+
     setBoard(oldBoard => {
       const [y, x] = coord.split("-").map(Number);
 
@@ -81,14 +87,18 @@ function Board({nrows=10, ncols=10, chanceLightStartsOn}) {
 
 
 
-      flipCell(y-1, x)
-      flipCell(y+1, x)
-      flipCell(y, x-1)
-      flipCell(y, x+1)
-
-
       // TODO: return the copy
-      return boardCopy
+      flipCell(x, y, boardCopy);
+      flipCell(x + 1, y, boardCopy)
+      flipCell(x - 1, y, boardCopy)
+      flipCell(x, y + 1, boardCopy)
+      flipCell(x, y - 1, boardCopy)
+
+      if (hasWon()) {
+        console.log("ok")
+      }
+
+      return boardCopy;
     });
   }
 
@@ -99,13 +109,14 @@ function Board({nrows=10, ncols=10, chanceLightStartsOn}) {
   // make table board
 
 
-  return (
-  <table>
-    {createBoard().map(r => <tr>{r.map(c => <td>{c ? 0 : "."}</td>)}</tr>)}
-    
-  </table>
-  )
 
+  return (
+    hasWon() ? <div>You won!</div> :
+    <table>
+      {board.map((r, i) => <tr>{r.map((c, j) => Cell({ flipCellsAroundMe: () => flipCellsAround(`${j}-${i}`), isLit: c }))}</tr>)}
+
+    </table>
+  )
 
   // TODO
 
